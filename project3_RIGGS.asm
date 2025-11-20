@@ -42,3 +42,19 @@ copy_loop:
     inc rsi
     inc rdi
     loop copy_loop  ; runs loop until everything is copied 
+
+    ; cleans up output 
+    mov byte [encoded_bytes + 48], 10
+    mov byte [encoded_bytes + 49], 0
+
+    ; prints copied data
+    mov rax, 1  ; sets syscall to write - read is 2 for syscall
+    mov rdi, 1
+    lea rsi, [encoded_bytes]
+    mov rdx, 50
+    syscall
+
+    ; exits 
+    mov rax, 60
+    xor rdi, rdi
+    syscall
