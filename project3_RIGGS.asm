@@ -7,7 +7,7 @@ section .data
 file_name:      db "input.bin", 0
 base64_alphabet: db "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", 0
 
-; reserves space for variables to be filled later  
+; reserves space for variables to be filled later
 section .bss
 input_bytes:    resb 48
 encoded_bytes:  resb 65
@@ -17,20 +17,28 @@ main:
 
     xor rsi, rsi    ; clears out rsi
     xor rdx, rdx    ; clears out rdx
-    ; opens input.bin and store its input in r12
+    ; opens input.bin and stores its input in r12
     mov rax, 2      ; set to 2 for syscall open 
-    mov rdi, [file_name]    
+    lea rdi, [file_name]
     syscall
     mov r12, rax
 
-    ; reads from input.bin 
+    ; reads from input.bin
     mov rax, 0
     mov rdi, r12
-    mov rsi, [input_bytes]  ; where data is stored
+    lea rsi, [input_bytes]  ; where data is stored 
     mov rdx, 48
     syscall
 
-    ; copies the data to output 
+    ; copies the data to output
     mov rcx, 48
-    mov rsi, [input_bytes]
-    mov rdi, [encoded_bytes]
+    lea rsi, [input_bytes]
+    lea rdi, [encoded_bytes]
+
+    ; copies input to output buffer - does not touch input 
+copy_loop:
+    mov al, [rsi]
+    mov [rdi], al
+    inc rsi
+    inc rdi
+    loop copy_loop  ; runs loop until everything is copied 
